@@ -12,7 +12,7 @@ colnames(data) <- c("MC_line_count","MC_cyclomatic","MC_essential","MC_design","
                     "total_operators","total_operands","flow_graph","TARGET")
 levels(data$TARGET) <- c(0, 1)
 data
-write.csv(data, file = "JM1_renamed.csv",row.names = FALSE)
+write.csv(data, file = "data/JM1_renamed.csv",row.names = FALSE)
 View(data)
 summary(data)
 introduce(data = data)
