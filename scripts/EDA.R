@@ -11,7 +11,9 @@ colnames(data) <- c("MC_line_count","MC_cyclomatic","MC_essential","MC_design","
                     "effort", "b", "t","line_code", "line_comment","line_blank","line_code_and_comment","unique_operators","unique_operands",
                     "total_operators","total_operands","flow_graph","TARGET")
 levels(data$TARGET) <- c(0, 1)
-data %>% filter(line_code==0 & line_code_and_comment!=0) %>% count()
+
+data %>% filter(line_code!=0 & line_comment==0) %>% count()
+
 write.csv(data, file = "data/JM1_renamed.csv",row.names = FALSE)
 summary(data)
 introduce(data = data)
