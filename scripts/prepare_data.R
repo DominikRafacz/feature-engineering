@@ -13,7 +13,7 @@ get_data <- function() {
   
   X_test <- select(test, -TARGET)
   y_test <- test[, 'TARGET']
-  return(list(X_train, y_train, X_test, y_test, data))
+  return(list(X_train, y_train, X_test, y_test, train, test, data))
 }
 
 
