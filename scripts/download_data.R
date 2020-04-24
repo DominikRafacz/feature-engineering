@@ -23,14 +23,21 @@ download_data_special <- function(id, name) {
   return(data)
 }
 
+prepare_CM1 <- function() {
+  data <- read.csv("data/CM1.csv")
+  levels(data$TARGET) <- c(0, 1)
+  data["source"] <- "CM1"
+  return(data)
+}
+
 datasets <- list()
 datasets[[1]] <- download_data(1053, "JM1")
 datasets[[2]] <- download_data(1067, "KC1")
 datasets[[3]] <- download_data(1063, "KC2")
 datasets[[4]] <- download_data_special(1068, "PC1")
-#datasets[[5]] <- download_data(??, "CM1")
+datasets[[5]] <- prepare_CM1()
 
-dataset <- rbind(datasets[[1]], datasets[[2]], datasets[[3]], datasets[[4]])
+dataset <- rbind(datasets[[1]], datasets[[2]], datasets[[3]], datasets[[4]], datasets[[5]])
 write.csv(dataset, file = "data/data_concataned.csv",row.names = FALSE)
 
 #KC1 <- getOMLDataSet(data.id = 1068)
