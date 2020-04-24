@@ -1,0 +1,22 @@
+## Predicting code defects using interpretable static measures.
+
+*Authors: Wojciech Bogucki, Tomasz Makowski, Dominik Rafacz (Warsaw University of Technology)*
+
+### Abstract
+
+
+### Introduction and Motivation
+
+Since the very beginning of the computer revolution there have been attempts to increase efficiency in determining possible defects and failures in the code. An effective method to do so could bring many potential benefits by identifying such sites as early as at the code development stage and eliminating costly errors at the deployment stage. McCabe and Halstead proposed a set of measures that are based on static properties of the code (including basic values, e.g. number of lines of code or number of unique operators, as well as transformations of them). In their hypotheses, they argue that these measures can significantly help to build models that predict the sensitive spots in program modules. To support their hypotheses with facts, they collected information about the code used in NASA using scrapers and then used machine learning algorithms (referencja do artykułu). In this article we use the above data sets to compare the effectiveness of the models and informational measures. We check whether we are able to achieve the results of the so-called black box models (such as neural networks or gradient boosting machines) on the basic data using interpretable model (e.g. trees and linear regression) instead.
+
+### Related Work
+
+
+
+### Methodology
+
+
+### Results
+
+
+### Summary and conclusions
