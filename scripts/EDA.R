@@ -5,15 +5,7 @@ library(dplyr)
 
 
 # renaming columns --------------------------------------------------------
-JM1 <- getOMLDataSet(data.id = 1053)
-
-data <- na.omit((JM1)$data)
-colnames(data) <- c("MC_line_count","MC_cyclomatic","MC_essential","MC_design","num_oo","volume","program_length","difficulty","inteligence",
-                    "effort", "b", "t","line_code", "line_comment","line_blank","line_code_and_comment","unique_operators","unique_operands",
-                    "total_operators","total_operands","flow_graph","TARGET")
-levels(data$TARGET) <- c(0, 1)
-write.csv(data, file = "data/JM1_renamed.csv",row.names = FALSE)
-
+data <- read.csv("data/data_concataned.csv")
 
 # EDA ---------------------------------------------------------------------
 colnames(data)
@@ -59,7 +51,8 @@ describe(data_po$flow_graph)
 # to test
 hampel_outlier(data$flow_graph)
 data_po <- prep_outliers(data,input = c('flow_graph'), type='stop', method='tukey')
-
+plot_histogram(data[,'flow_graph'])
+plot_histogram(data_po[,'flow_graph'])
 # to drop: t, b
 
 # data transformation -----------------------------------------------------
