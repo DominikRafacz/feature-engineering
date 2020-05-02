@@ -46,13 +46,14 @@ obtain_all_data <- function() {
   ))
 }
 
-split_data <- function(data_raw) {
-  set.seed(1998)
-  size <- floor(0.8 * nrow(data_raw))
-  train_indexes <- sample(seq_len(nrow(data_raw)), size = size)
-  
-  data_train <- data_raw[train_indexes, ]
-  data_test <- data_raw[-train_indexes, ]
-  return(list(data_train = data_train, 
-              data_test = data_test))
+remove_advanced_measures <- function(dat) {
+  dat[, -(1:ncol(dat))[colnames(dat) %in% 
+                               c("num_oo",             
+                                 "volume", 
+                                 "program_length",
+                                 "difficulty",
+                                 "inteligence",
+                                 "effort",
+                                 "b",                   #??
+                                 "t")]]
 }
