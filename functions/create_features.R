@@ -1,18 +1,17 @@
-create_features_for_data <- function(data, pack=1) {
+create_features_for_data <- function(data, column_names, pack=1) {
   operands_list <- create_default_operands_list(pack)
-  return(create_features(data, operands_list))
+  return(create_features(data, operands_list, column_names))
 }
 
 
-create_features <- function(data, operands_list) {
-  column_names <- colnames(data)[13:21]
+create_features <- function(data, operands_list, column_names){
   for (stack_of_operands in operands_list) {
     expressions <- create_expression("", column_names, stack_of_operands)
     for (expr in expressions) {
       data[[expr]] <- eval(parse(text=expr))
     }
   }
-  return(data)
+  return(substitute_names(data))
 }
 
 create_expression <- function(previous_expression, column_names, stack_of_operands) {
@@ -107,3 +106,17 @@ add_operands <- function(operand_list, operand) {
 #ncol(data_new)
 #nrow(data_new)
 #data_new[1:20, 1:120]
+
+
+substitute_names <- function(data) {
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "data$", "")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "/", "_over_")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "+", "_plus_")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "-", "_minus_")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "*", "_times_")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "(", "_lp_")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), ")", "_rp_")
+  colnames(data) <- stri_replace_all_regex(colnames(data), "^_", "")
+  colnames(data) <- stri_replace_all_regex(colnames(data), "_$", "")
+  data
+}
