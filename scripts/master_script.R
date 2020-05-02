@@ -7,7 +7,8 @@ source("scripts/create_plan.R")                 # creating the plan
 
 # source("scripts/EDA.R")                       # doing EDA
 
+set.seed(1998)
+
 plan                                            # displaying the plan
 make(plan)                                      # making the plan
 vis_drake_graph(plan)                           # visualizing which parts of the plan are not up to date
-# readd(raw_data)                               # accessing targets of the plan
