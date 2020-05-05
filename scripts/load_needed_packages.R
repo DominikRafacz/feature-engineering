@@ -1,5 +1,6 @@
 library(drake)
 library(OpenML)
+library(funModeling)
 library(dplyr)
 library(stringi)
 library(mlr)

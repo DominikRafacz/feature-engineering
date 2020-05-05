@@ -12,6 +12,7 @@ for (package in c("drake",
                   "xgboost",
                   "ranger",
                   "gbm",
+                  "funModeling"
                   #"bartMachine"
                   )) {
   if (!package %in% installed) install.packages(package)

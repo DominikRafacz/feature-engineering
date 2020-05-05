@@ -20,3 +20,20 @@ one_hot_encode <- function(dat) {
     else column
   }))
 }
+
+reduce_outliers <- function(data){
+  num_var <- status(data) %>% filter(type=='numeric' & p_zeros<0.5) %>% select(variable) %>% unlist()
+  data_tukey <- prep_outliers(data,num_var, type='stop', method = "tukey")
+  num_var2 <- status(data) %>% filter(type=='numeric' & p_zeros>=0.5) %>% select(variable) %>% unlist()
+  data_bt <- prep_outliers(data_tukey,num_var2, type='stop', method = "bottom_top", bottom_percent=0, top_percent = 0.01)
+}
+
+discretize <- function(data, n_bins){
+  db <- discretize_get_bins(data, n_bins = n_bins)
+  discretize_df(data, db)
+}
+
+apply_log <- function(data){
+  num_var <- status(data) %>% filter(type=='numeric') %>% select(variable) %>% unlist()
+  data%>% mutate_at(vars(num_var),function(x)log(x+1))
+}
