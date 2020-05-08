@@ -28,12 +28,25 @@ reduce_outliers <- function(data){
   data_bt <- prep_outliers(data_tukey,num_var2, type='stop', method = "bottom_top", bottom_percent=0, top_percent = 0.01)
 }
 
+# Variable discretizatio
 discretize <- function(data, n_bins){
   db <- discretize_get_bins(data, n_bins = n_bins)
   discretize_df(data, db)
 }
 
+# Variable discretization based on gain ratio maximization
+gr_disc <- function(data){
+  num_var <- status(data) %>% filter(type=='numeric' & unique>10) %>% select(variable) %>% unlist()
+  l <- lapply(num_var, function(col){
+    input <- data[,col]
+    target <- data$TARGET
+    data[,col] <- discretize_rgr(input, target, max_n_bins = 10)
+  })
+  data[,num_var] <- l
+  data
+}
+
 apply_log <- function(data){
-  num_var <- status(data) %>% filter(type=='numeric') %>% select(variable) %>% unlist()
-  data%>% mutate_at(vars(num_var),function(x)log(x+1))
+  num_var <- status(data) %>% filter(type=='numeric' & unique>10) %>% select(variable) %>% unlist()
+  data%>% select(-source.1,-source.2, - source.3, -source.4, -source.5) %>% mutate_at(vars(num_var),function(x)log(x+1))
 }

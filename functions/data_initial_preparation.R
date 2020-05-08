@@ -57,3 +57,15 @@ remove_advanced_measures <- function(dat) {
                                  "b",                   #??
                                  "t")]]
 }
+
+remove_halstead_measures <- function(dat) {
+  dat[, -(1:ncol(dat))[colnames(dat) %in% 
+                         c("line_code",             
+                           "line_comment", 
+                           "line_blank",
+                           "line_code_and_comment",
+                           "unique_operators",
+                           "unique_operands",
+                           "total_operators",
+                           "total_operands")]]
+}

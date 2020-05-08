@@ -4,11 +4,29 @@ plan <- drake_plan(
   
   save_data = write.csv(data_raw_fixed, 
                         file_out("data/data_concataned.csv"), row.names = FALSE),
-  data_imp = impute_median(data_raw_fixed),
-  data_ohe = one_hot_encode(data_imp),
-  data_red = remove_advanced_measures(data_ohe),
+  data_ohe = one_hot_encode(data_raw_fixed),
+  data_imp = impute_median(data_ohe),
+  data_red = remove_advanced_measures(data_imp),
+  data_out = reduce_outliers(data_red),
+  data_log = apply_log(data_out),
+  data_gr = gr_disc(data_out),
+  
+  # data without halstead measures 
+  data_no_hal_red = remove_halstead_measures(data_out),
+  
+  # data without rows with line_code = 0
+  data_no_zero_LC = data_raw_fixed %>% filter(!(line_code==0)),
+  data_no_zero_LC_ohe = one_hot_encode(data_no_zero_LC),
+  data_no_zero_LC_imp = impute_median(data_no_zero_LC_ohe),
+  data_no_zero_LC_red = remove_advanced_measures(data_no_zero_LC_imp),
+  data_no_zero_LC_out = reduce_outliers(data_no_zero_LC_red),
+  data_no_zero_LC_dis = discretize(data_no_zero_LC_out,10),
+  data_no_zero_LC_gr = gr_disc(data_no_zero_LC_out),
+  save_data_no_zero_LC = write.csv(data_no_zero_LC_red, 
+                        file_out("data/data_no_zero_LC.csv"), row.names = FALSE),
   
   cv_inds = generate_cv_inds(data_red),
+  cv_inds_no_zero_LC = generate_cv_inds(data_no_zero_LC_red),
   cv_desc = makeResampleDesc("CV", fixed = TRUE),
   
   measures = list(auc, acc, ppv, tpr, f1),
@@ -28,19 +46,75 @@ plan <- drake_plan(
                            lrn_0_rpart,
                            lrn_0_logreg), task_0, cv_desc, measures),
   
-  data_gen = create_features_for_data(data_red, c("line_code", 
-                                                  "line_comment", 
-                                                  "line_blank", 
-                                                  "line_code_and_comment", 
-                                                  "unique_operators", 
-                                                  "unique_operands", 
-                                                  "total_operators", 
-                                                  "total_operands", 
+  data_gen = create_features_for_data(data_red, c("line_code",
+                                                  "line_comment",
+                                                  "line_blank",
+                                                  "line_code_and_comment",
+                                                  "unique_operators",
+                                                  "unique_operands",
+                                                  "total_operators",
+                                                  "total_operands",
                                                   "flow_graph")),
-  
-  task_1 = makeClassifTask("task_1", filter_out_infinite_and_nan(data_gen), 
+
+  task_1 = makeClassifTask("task_1", filter_out_infinite_and_nan(data_gen),
                            "TARGET", blocking = cv_inds),
-  
+
   bench_1 = benchmark(list(lrn_0_rpart,
-                           lrn_0_logreg), task_1, cv_desc, measures)
+                           lrn_0_logreg), task_1, cv_desc, measures),
+  # data without rows with line_code = 0
+  task_2 = makeClassifTask("task_2", data_no_zero_LC_red, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_2 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_2, cv_desc, measures),
+  # data with reduced outliers and without halstead's measures
+  task_3 = makeClassifTask("task_3", data_no_hal_red, "TARGET", blocking = cv_inds),
+  bench_3 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_3, cv_desc, measures),
+  # data with reduced outliers
+  task_4 = makeClassifTask("task_4", data_out, "TARGET", blocking = cv_inds),
+  bench_4 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_4, cv_desc, measures),
+  # data without rows with line_code = 0 and with reduced outliers
+  task_5 = makeClassifTask("task_5", data_no_zero_LC_out, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_5 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_5, cv_desc, measures),
+  # data with reduced outliers and logatrithm of numeric columns
+  task_6 = makeClassifTask("task_6", data_log, "TARGET", blocking = cv_inds),
+  bench_6 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_6, cv_desc, measures),
+  # data without rows with line_code = 0 and with discretized columns(10 bins)
+  task_7 = makeClassifTask("task_7", data_no_zero_LC_dis, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_7 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_7, cv_desc, measures),
+  # data without rows with line_code = 0 and with gain-ratio discretized columns
+  task_8 = makeClassifTask("task_8", data_no_zero_LC_gr, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_8 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_8, cv_desc, measures),
+  # data with reduced outliers and gain-ratio discretized columns
+  task_9 = makeClassifTask("task_9", data_gr, "TARGET", blocking = cv_inds),
+  bench_9 = benchmark(list(lrn_0_ranger,
+                           # lrn_0_xgboost,
+                           #lrn_0_bart,
+                           lrn_0_rpart,
+                           lrn_0_logreg), task_9, cv_desc, measures)
 )
