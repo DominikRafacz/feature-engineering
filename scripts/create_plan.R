@@ -48,21 +48,6 @@ plan <- drake_plan(
                            lrn_0_rpart,
                            lrn_0_logreg), task_0, cv_desc, measures),
   
-  data_gen = create_features_for_data(data_red, c("line_code",
-                                                  "line_comment",
-                                                  "line_blank",
-                                                  "line_code_and_comment",
-                                                  "unique_operators",
-                                                  "unique_operands",
-                                                  "total_operators",
-                                                  "total_operands",
-                                                  "flow_graph")),
-
-  task_1 = makeClassifTask("task_1", filter_out_infinite_and_nan(data_gen),
-                           "TARGET", blocking = cv_inds),
-
-  bench_1 = benchmark(list(lrn_0_rpart,
-                           lrn_0_logreg), task_1, cv_desc, measures),
   # data without rows with line_code = 0
   task_2 = makeClassifTask("task_2", data_no_zero_LC_red, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_2 = benchmark(list(lrn_0_ranger,
