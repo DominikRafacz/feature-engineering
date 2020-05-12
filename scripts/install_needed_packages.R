@@ -10,11 +10,12 @@ for (package in c("drake",
                   "dplyr",
                   "stringi",
                   "mlr",
-                  "xgboost",
+                  "mlrMBO",
                   "ranger",
-                  "gbm",
-                  "funModeling"
-                  #"bartMachine"
+                  "funModeling",
+                  "kknn",
+                  "DiceKriging",
+                  "rgenoud"
                   )) {
   if (!package %in% installed) install.packages(package)
 }

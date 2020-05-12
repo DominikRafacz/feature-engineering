@@ -27,24 +27,20 @@ plan <- drake_plan(
   
   cv_inds = generate_cv_inds(data_red),
   cv_inds_no_zero_LC = generate_cv_inds(data_no_zero_LC_red),
-  cv_desc = makeResampleDesc("CV", fixed = TRUE),
+  cv_desc = makeResampleDesc("CV", fixed = TRUE, iters = 5),
   
   measures = list(auc, acc, ppv, tpr, f1),
   
   task_0 = makeClassifTask("task_0", data_red, "TARGET", blocking = cv_inds),
   
   lrn_0_ranger = makeLearner("classif.ranger", predict.type = "prob"),
-  lrn_0_xgboost = makeLearner("classif.xgboost", predict.type = "prob"),
-  #lrn_0_bart = makeLearner("classif.bartMachine", predict.type = "prob"),
   
   lrn_0_logreg = makeLearner("classif.logreg", predict.type = "prob"),
   lrn_0_rpart = makeLearner("classif.rpart", predict.type = "prob"),
   lrn_0_knn = makeLearner("classif.kknn", predict.type = "prob"),
   
   bench_0 = benchmark(list(lrn_0_ranger,
-                           lrn_0_xgboost,
                            lrn_0_knn,
-                           #lrn_0_bart,
                            lrn_0_rpart,
                            lrn_0_logreg), task_0, cv_desc, measures),
   
@@ -52,64 +48,80 @@ plan <- drake_plan(
   task_2 = makeClassifTask("task_2", data_no_zero_LC_red, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_2 = benchmark(list(lrn_0_ranger,
                            lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
                            lrn_0_rpart,
                            lrn_0_logreg), task_2, cv_desc, measures),
-  # data with reduced outliers and without halstead's measures
+  
+  par_rpart = tune_rpart(task_0, measures, cv_desc),
+  lrn_1_rpart = makeLearner("classif.rpart",
+                            id = "rpart_tuned",
+                            predict.type = "prob", 
+                            par.vals = par_rpart),
+  
+  # data with reduced outliers and without Halstead's measures
   task_3 = makeClassifTask("task_3", data_no_hal_red, "TARGET", blocking = cv_inds),
-  bench_3 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_3 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_3, cv_desc, measures),
+  
   # data with reduced outliers
   task_4 = makeClassifTask("task_4", data_out, "TARGET", blocking = cv_inds),
-  bench_4 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_4 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_4, cv_desc, measures),
+  
   # data without rows with line_code = 0 and with reduced outliers
   task_5 = makeClassifTask("task_5", data_no_zero_LC_out, "TARGET", blocking = cv_inds_no_zero_LC),
-  bench_5 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_5 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_5, cv_desc, measures),
+  
   # data with reduced outliers and logatrithm of numeric columns
   task_6 = makeClassifTask("task_6", data_log, "TARGET", blocking = cv_inds),
-  bench_6 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_6 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_6, cv_desc, measures),
+  
   # data without rows with line_code = 0 and with discretized columns(10 bins)
   task_7 = makeClassifTask("task_7", data_no_zero_LC_dis, "TARGET", blocking = cv_inds_no_zero_LC),
-  bench_7 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_7 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_7, cv_desc, measures),
+  
   # data without rows with line_code = 0 and with gain-ratio discretized columns
   task_8 = makeClassifTask("task_8", data_no_zero_LC_gr, "TARGET", blocking = cv_inds_no_zero_LC),
-  bench_8 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_8 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
+                           lrn_1_rpart,
                            lrn_0_logreg), task_8, cv_desc, measures),
+  
   # data with reduced outliers and gain-ratio discretized columns
   task_9 = makeClassifTask("task_9", data_gr, "TARGET", blocking = cv_inds),
-  bench_9 = benchmark(list(lrn_0_ranger,
-                           lrn_0_knn,
-                           # lrn_0_xgboost,
-                           #lrn_0_bart,
+  bench_9 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
-                           lrn_0_logreg), task_9, cv_desc, measures)
+                           lrn_1_rpart,
+                           lrn_0_logreg), task_9, cv_desc, measures),
+  
+  task_10 = undersample(task_9, 0.8),
+  bench_10 = benchmark(list(lrn_0_knn,
+                           lrn_0_rpart,
+                           lrn_1_rpart,
+                           lrn_0_logreg), task_10, cv_desc, measures),
+  
+  task_11 = oversample(task_10, 1.5),
+  bench_11 = benchmark(list(lrn_0_knn,
+                            lrn_0_rpart,
+                            lrn_1_rpart,
+                            lrn_0_logreg), task_11, cv_desc, measures),
+
+  task_12 = smote(task_10, 1.5),
+  bench_12 = benchmark(list(lrn_0_knn,
+                            lrn_0_rpart,
+                            lrn_1_rpart,
+                            lrn_0_logreg), task_12, cv_desc, measures),
+  
 )
