@@ -39,9 +39,11 @@ plan <- drake_plan(
   
   lrn_0_logreg = makeLearner("classif.logreg", predict.type = "prob"),
   lrn_0_rpart = makeLearner("classif.rpart", predict.type = "prob"),
+  lrn_0_knn = makeLearner("classif.kknn", predict.type = "prob"),
   
   bench_0 = benchmark(list(lrn_0_ranger,
                            lrn_0_xgboost,
+                           lrn_0_knn,
                            #lrn_0_bart,
                            lrn_0_rpart,
                            lrn_0_logreg), task_0, cv_desc, measures),
@@ -64,6 +66,7 @@ plan <- drake_plan(
   # data without rows with line_code = 0
   task_2 = makeClassifTask("task_2", data_no_zero_LC_red, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_2 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -71,6 +74,7 @@ plan <- drake_plan(
   # data with reduced outliers and without halstead's measures
   task_3 = makeClassifTask("task_3", data_no_hal_red, "TARGET", blocking = cv_inds),
   bench_3 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -78,6 +82,7 @@ plan <- drake_plan(
   # data with reduced outliers
   task_4 = makeClassifTask("task_4", data_out, "TARGET", blocking = cv_inds),
   bench_4 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -85,6 +90,7 @@ plan <- drake_plan(
   # data without rows with line_code = 0 and with reduced outliers
   task_5 = makeClassifTask("task_5", data_no_zero_LC_out, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_5 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -92,6 +98,7 @@ plan <- drake_plan(
   # data with reduced outliers and logatrithm of numeric columns
   task_6 = makeClassifTask("task_6", data_log, "TARGET", blocking = cv_inds),
   bench_6 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -99,6 +106,7 @@ plan <- drake_plan(
   # data without rows with line_code = 0 and with discretized columns(10 bins)
   task_7 = makeClassifTask("task_7", data_no_zero_LC_dis, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_7 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -106,6 +114,7 @@ plan <- drake_plan(
   # data without rows with line_code = 0 and with gain-ratio discretized columns
   task_8 = makeClassifTask("task_8", data_no_zero_LC_gr, "TARGET", blocking = cv_inds_no_zero_LC),
   bench_8 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
@@ -113,6 +122,7 @@ plan <- drake_plan(
   # data with reduced outliers and gain-ratio discretized columns
   task_9 = makeClassifTask("task_9", data_gr, "TARGET", blocking = cv_inds),
   bench_9 = benchmark(list(lrn_0_ranger,
+                           lrn_0_knn,
                            # lrn_0_xgboost,
                            #lrn_0_bart,
                            lrn_0_rpart,
