@@ -14,6 +14,13 @@ create_features <- function(data, operands_list, column_names){
   return(substitute_names(data))
 }
 
+create_features_by_expressions <- function(data, expressions) {
+  for (expr in expressions) {
+    data[[expr]] <- eval(parse(text=expr))
+  }
+  return(substitute_names(data))
+}
+
 create_expression <- function(previous_expression, column_names, stack_of_operands) {
   expressions <- c()
   if (length(stack_of_operands)==1) {
@@ -45,17 +52,23 @@ create_default_operands_list <- function(pack=1) {
     }
   }
   if (pack==2) {
-    for (i in op2) {
-      for (j in op1) {
-        operands_list <- add_operands(operands_list, c("(", i, paste0(")",j,"("), op2[1], ")"))
-      }
+    for (j in op1) {
+      operands_list <- add_operands(operands_list, c("(", op2[1], paste0(")",j,"("), op2[1], ")"))
     }
   }
   if (pack==3) {
-    for (i in op2) {
-      for (j in op1) {
-        operands_list <- add_operands(operands_list, c("(", i, paste0(")",j,"("), op2[2], ")"))
-      }
+    for (j in op1) {
+      operands_list <- add_operands(operands_list, c("(", op2[1], paste0(")",j,"("), op2[2], ")"))
+    }
+  }
+  if (pack==8) {
+    for (j in op1) {
+      operands_list <- add_operands(operands_list, c("(", op2[2], paste0(")",j,"("), op2[1], ")"))
+    }
+  }
+  if (pack==9) {
+    for (j in op1) {
+      operands_list <- add_operands(operands_list, c("(", op2[2], paste0(")",j,"("), op2[2], ")"))
     }
   }
   if (pack==4) {
@@ -109,7 +122,7 @@ add_operands <- function(operand_list, operand) {
 
 
 substitute_names <- function(data) {
-  colnames(data) <- stri_replace_all_fixed(colnames(data), "data$", "")
+  colnames(data) <- stri_replace_all_fixed(colnames(data), "data$", "_dolar_")
   colnames(data) <- stri_replace_all_fixed(colnames(data), "/", "_over_")
   colnames(data) <- stri_replace_all_fixed(colnames(data), "+", "_plus_")
   colnames(data) <- stri_replace_all_fixed(colnames(data), "-", "_minus_")
@@ -119,4 +132,19 @@ substitute_names <- function(data) {
   colnames(data) <- stri_replace_all_regex(colnames(data), "^_", "")
   colnames(data) <- stri_replace_all_regex(colnames(data), "_$", "")
   data
+}
+
+reverse_names_substition <- function(columns) {
+  columns <- stri_replace_all_regex(columns, "^", "_")
+  columns <- stri_replace_all_regex(columns, "$", "_")
+  columns <- stri_replace_all_fixed(columns, "_over_", "/")
+  columns <- stri_replace_all_fixed(columns, "_plus_", "+")
+  columns <- stri_replace_all_fixed(columns, "_minus_", "-")
+  columns <- stri_replace_all_fixed(columns, "_times_", "*")
+  columns <- stri_replace_all_fixed(columns, "_lp_", "(")
+  columns <- stri_replace_all_fixed(columns, "_rp_", ")")
+  columns <- stri_replace_all_fixed(columns, "_dolar_", "data$")
+  columns <- stri_replace_all_regex(columns, "^_", "")
+  columns <- stri_replace_all_regex(columns, "_$", "")
+  return(columns)
 }
