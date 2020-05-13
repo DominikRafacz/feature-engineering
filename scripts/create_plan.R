@@ -24,8 +24,9 @@ plan <- drake_plan(
   data_no_zero_LC_ohe = one_hot_encode(data_no_zero_LC),
   data_no_zero_LC_imp = impute_median(data_no_zero_LC_ohe),
   data_no_zero_LC_red = remove_advanced_measures(data_no_zero_LC_imp),
+  data_no_zero_LC_norm = normalize_df(data_no_zero_LC_red),
   data_no_zero_LC_out = reduce_outliers(data_no_zero_LC_red),
-  data_no_zero_LC_out_rsafe = reduce_outliers(data_no_zero_LC_out),
+  data_no_zero_LC_out_rsafe = transform_rsafe(data_no_zero_LC_out),
   data_no_zero_LC_dis = discretize(data_no_zero_LC_out,10),
   data_no_zero_LC_gr = gr_disc(data_no_zero_LC_out),
   save_data_no_zero_LC = write.csv(data_no_zero_LC_red, 
@@ -158,5 +159,10 @@ plan <- drake_plan(
   bench_17 = benchmark(list(lrn_0_knn,
                            lrn_0_rpart,
                            lrn_1_rpart,
-                           lrn_0_logreg), task_17, cv_desc, measures)
+                           lrn_0_logreg), task_17, cv_desc, measures),
+  task_18 = makeClassifTask("task_18", data_no_zero_LC_norm, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_18 = benchmark(list(lrn_0_knn,
+                            lrn_0_rpart,
+                            lrn_1_rpart,
+                            lrn_0_logreg), task_18, cv_desc, measures)
 )
