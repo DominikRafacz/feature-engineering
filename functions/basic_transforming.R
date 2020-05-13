@@ -50,3 +50,23 @@ apply_log <- function(data){
   num_var <- status(data) %>% filter(type=='numeric' & unique>10) %>% select(variable) %>% unlist()
   data%>% select(-source.1,-source.2, - source.3, -source.4, -source.5) %>% mutate_at(vars(num_var),function(x)log(x+1))
 }
+# normalizaton of numeric variables 
+normalize_df <- function(data){
+  num_var <- status(data) %>% filter(type=='numeric') %>% select(variable) %>% unlist()
+  data %>% mutate_at(vars(num_var),scale)
+}
+# rSAFE
+transform_rsafe <- function(data){
+  # black-box model
+  model_ran <- ranger(TARGET~., data=data, seed = 1998)
+  
+  predict_function <- function(model, x) as.numeric(predict(model, x, type = "response")$predictions)
+  explainer_ran <- explain(model_ran, data = data %>% select(-TARGET), y = as.numeric(data$TARGET), predict_function = predict_function, verbose = FALSE)
+  # new variables
+  safe_extractor <- safe_extraction(explainer_ran, penalty = 20, verbose = FALSE)
+  data_rsafe <- safely_transform_data(safe_extractor, data, verbose = FALSE)
+  # select variables
+  selected_variables <- safely_select_variables(safe_extractor, data_rsafe, which_y = "TARGET", verbose = FALSE)
+  data_rsafe_sel <- data_rsafe[,c(selected_variables,"TARGET")]
+  data_rsafe_sel
+}

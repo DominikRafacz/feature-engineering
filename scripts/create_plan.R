@@ -7,7 +7,12 @@ plan <- drake_plan(
   data_ohe = one_hot_encode(data_raw_fixed),
   data_imp = impute_median(data_ohe),
   data_red = remove_advanced_measures(data_imp),
+  
+  data_norm = normalize_df(data_red),
+  data_rsafe = transform_rsafe(data_red),
   data_out = reduce_outliers(data_red),
+  data_out_norm = normalize_df(data_out),
+  data_out_rsafe = transform_rsafe(data_out),
   data_log = apply_log(data_out),
   data_gr = gr_disc(data_out),
   
@@ -20,6 +25,7 @@ plan <- drake_plan(
   data_no_zero_LC_imp = impute_median(data_no_zero_LC_ohe),
   data_no_zero_LC_red = remove_advanced_measures(data_no_zero_LC_imp),
   data_no_zero_LC_out = reduce_outliers(data_no_zero_LC_red),
+  data_no_zero_LC_out_rsafe = reduce_outliers(data_no_zero_LC_out),
   data_no_zero_LC_dis = discretize(data_no_zero_LC_out,10),
   data_no_zero_LC_gr = gr_disc(data_no_zero_LC_out),
   save_data_no_zero_LC = write.csv(data_no_zero_LC_red, 
@@ -123,5 +129,34 @@ plan <- drake_plan(
                             lrn_0_rpart,
                             lrn_1_rpart,
                             lrn_0_logreg), task_12, cv_desc, measures),
-  
+  # data with normalized variables
+  task_13 = makeClassifTask("task_13", data_norm, "TARGET", blocking = cv_inds),
+  bench_13 = benchmark(list(lrn_0_knn,
+                           lrn_0_rpart,
+                           lrn_1_rpart,
+                           lrn_0_logreg), task_13, cv_desc, measures),
+  # data with reduced outliers and normalized variables
+  task_14 = makeClassifTask("task_14", data_out_norm, "TARGET", blocking = cv_inds),
+  bench_14 = benchmark(list(lrn_0_knn,
+                           lrn_0_rpart,
+                           lrn_1_rpart,
+                           lrn_0_logreg), task_14, cv_desc, measures),
+  # data with variables from rSAFE
+  task_15 = makeClassifTask("task_15", data_rsafe, "TARGET", blocking = cv_inds),
+  bench_15 = benchmark(list(lrn_0_knn,
+                            lrn_0_rpart,
+                            lrn_1_rpart,
+                            lrn_0_logreg), task_15, cv_desc, measures),
+  # data with reduced outliers and variables from rSAFE
+  task_16 = makeClassifTask("task_16", data_out_rsafe, "TARGET", blocking = cv_inds),
+  bench_16 = benchmark(list(lrn_0_knn,
+                            lrn_0_rpart,
+                            lrn_1_rpart,
+                            lrn_0_logreg), task_16, cv_desc, measures),
+  # data without rows with line_code = 0, reduced outliers and variables from rsafe 
+  task_17 = makeClassifTask("task_17", data_no_zero_LC_out_rsafe, "TARGET", blocking = cv_inds_no_zero_LC),
+  bench_17 = benchmark(list(lrn_0_knn,
+                           lrn_0_rpart,
+                           lrn_1_rpart,
+                           lrn_0_logreg), task_17, cv_desc, measures)
 )
