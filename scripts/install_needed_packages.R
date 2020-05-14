@@ -15,10 +15,12 @@ for (package in c("drake",
                   "funModeling",
                   "kknn",
                   "DiceKriging",
-                  "rgenoud"
+                  "rgenoud",
+                  "devtools"
                   )) {
   if (!package %in% installed) install.packages(package)
 }
 
+if (!"rSAFE" %in% installed) devtools::install_github("ModelOriented/rSAFE")
 
 rm(installed)
