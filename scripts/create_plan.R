@@ -110,26 +110,14 @@ plan <- drake_plan(
   task_discretized_rsafe = makeClassifTask("task_discretized_rsafe", data_discretized_rsafe, "TARGET", blocking = cv_inds_Z),
   bench_discretized_rsafe = benchmark(lrns_wb_T,
                                    task_discretized_rsafe,
-                                   cv_desc, measures)
+                                   cv_desc, measures),
   
   
   # 2a <- current state
   
-  # task_10 = undersample(task_9, 0.8),
-  # bench_10 = benchmark(list(lrn_0_knn,
-  #                          lrn_0_rpart,
-  #                          lrn_1_rpart,
-  #                          lrn_0_logreg), task_10, cv_desc, measures),
-  # 
-  # task_11 = oversample(task_10, 1.5),
-  # bench_11 = benchmark(list(lrn_0_knn,
-  #                           lrn_0_rpart,
-  #                           lrn_1_rpart,
-  #                           lrn_0_logreg), task_11, cv_desc, measures),
-  # 
-  # task_12 = smote(task_10, 1.5),
-  # bench_12 = benchmark(list(lrn_0_knn,
-  #                           lrn_0_rpart,
-  #                           lrn_1_rpart,
-  #                           lrn_0_logreg), task_12, cv_desc, measures),
+  # 4 - SMOTE algorithm
+  task_smote = smotize_task(task_outliers_reduced_and_normalized_Z, "task_smote_1", dup_size = 1),
+  bench_smote = benchmark(lrns_wb_T, 
+                          task_smote,
+                          cv_desc, measures)
 )

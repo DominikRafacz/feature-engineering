@@ -16,7 +16,8 @@ for (package in c("drake",
                   "kknn",
                   "DiceKriging",
                   "rgenoud",
-                  "devtools"
+                  "devtools",
+                  "smotefamily"
                   )) {
   if (!package %in% installed) install.packages(package)
 }
