@@ -83,7 +83,7 @@ remove_normalization_information <- function(data) {
 # bench_new_features[[3]]
 # bench_new_features[[1]]
 # 
-# bench_new_features2 <- model_by_finded_variables(data, bench_new_features[[3]], cv_inds, cv_desc, learner, learners, measures)
+# bench_new_features2 <- model_by_finded_variables(data, bench_new_features[[4]], cv_inds, cv_desc, learner, learners, measures)
 # plot(bench_new_features2[[2]])
 # bench_new_features2[[3]]
 # bench_new_features2[[1]]
