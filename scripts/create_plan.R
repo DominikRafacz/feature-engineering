@@ -116,8 +116,6 @@ plan <- drake_plan(
   # 2a <- current state
   
   # 4 - SMOTE algorithm
-  task_smote = smotize_task(task_outliers_reduced_and_normalized_Z, "task_smote_1", dup_size = 1),
-  bench_smote = benchmark(lrns_wb_T, 
-                          task_smote,
-                          cv_desc, measures)
+  bench_smote = calculate_smote(task_outliers_reduced_and_normalized_Z, 
+                                    "task_smote", 1, lrns_wb_T, measures)
 )
