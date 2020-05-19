@@ -1,15 +1,22 @@
-create_features_for_data <- function(data, column_names, pack=1) {
+create_features_for_data <- function(data, column_names, pack=1, from=0, to=10000) {
   operands_list <- create_default_operands_list(pack)
-  return(create_features(data, operands_list, column_names))
+  return(create_features(data, operands_list, column_names, from=from, to=to))
 }
 
 
-create_features <- function(data, operands_list, column_names){
+create_features <- function(data, operands_list, column_names, from=0, to=10000){
+  expressions <- c()
   for (stack_of_operands in operands_list) {
-    expressions <- create_expression("", column_names, stack_of_operands)
-    for (expr in expressions) {
-      data[[expr]] <- eval(parse(text=expr))
-    }
+    expressions <- c(expressions, create_expression("", column_names, stack_of_operands))
+  }
+  to <- min(length(expressions), to)
+  from <- min(length(expressions), from)
+  print(list("from", from))
+  print(list("to", to))
+  expressions <- expressions[seq(from,to,1)]
+  print(length(expressions))
+  for (expr in expressions) {
+    data[[expr]] <- eval(parse(text=expr))
   }
   return(substitute_names(data))
 }
@@ -40,6 +47,12 @@ create_default_operands_list <- function(pack=1) {
   op1 <- c("*", "/")
   op2 <- c("+", "-")
   op3 <- c(op1, op2)
+  if (pack==0) {
+    operands_list <- list(c("sqrt(", ")"))
+    for (i in op3) {
+      operands_list <- add_operands(operands_list, c("", i, ""))
+    }
+  }
   if (pack==1) {
     operands_list <- list(c("sqrt(", ")"))
     for (i in op3) {
@@ -75,7 +88,6 @@ create_default_operands_list <- function(pack=1) {
     for (i in op3) {
       for (j in op3) {
         operands_list <- add_operands(operands_list, c("(", paste0(")",i,"("), paste0(")",j,"("), ")"))
-        operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"(1/"), paste0(")",j,"(1/"), ")"))
       }
     }
   }
@@ -83,6 +95,19 @@ create_default_operands_list <- function(pack=1) {
     for (i in op3) {
       for (j in op3) {
         operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"(1/"), paste0(")",j,"("), ")"))
+      }
+    }
+  }
+  if (pack==10) {
+    for (i in op3) {
+      for (j in op3) {
+        operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"(1/"), paste0(")",j,"(1/"), ")"))
+      }
+    }
+  }
+  if (pack==11) {
+    for (i in op3) {
+      for (j in op3) {
         operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"("), paste0(")",j,"("), ")"))
       }
     }
@@ -91,7 +116,6 @@ create_default_operands_list <- function(pack=1) {
     for (i in op3) {
       for (j in op3) {
         operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"("), paste0(")",j,"(1/"), ")"))
-        operands_list <- add_operands(operands_list, c("sqrt(", paste0(")",i,"(1/"), paste0(")",j,"("), ")"))
       }
     }
   }
@@ -99,6 +123,19 @@ create_default_operands_list <- function(pack=1) {
     for (i in op3) {
       for (j in op3) {
         operands_list <- add_operands(operands_list, c("(1/", paste0(")",i,"sqrt("), paste0(")",j,"(1/"), ")"))
+      }
+    }
+  }
+  if (pack==12) {
+    for (i in op3) {
+      for (j in op3) {
+        operands_list <- add_operands(operands_list, c("sqrt(", paste0(")",i,"(1/"), paste0(")",j,"("), ")"))
+      }
+    }
+  }
+  if (pack==13) {
+    for (i in op3) {
+      for (j in op3) {
         operands_list <- add_operands(operands_list, c("sqrt(", paste0(")",i,"("), paste0(")",j,"(1/"), ")"))
       }
     }
