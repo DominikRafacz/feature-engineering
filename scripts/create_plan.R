@@ -117,13 +117,13 @@ plan <- drake_plan(
   
   # 4a - create new features selected by ranger
   variables_ranger = read.csv("data/variables_ranger.csv", stringsAsFactors=FALSE)$x,
-  new_features_ranger = model_by_finded_variables(data_outliers_reduced_Z, variables_ranger, cv_inds, cv_desc, lrn_ranger, lrn_wb_T, measures),
-  new_features_ranger_improved = model_by_finded_variables(data_outliers_reduced_Z, new_features_ranger, cv_inds, cv_desc, lrn_ranger, lrns_wb_T, measures),
+  new_features_ranger = model_by_finded_variables(data_outliers_reduced_Z, variables_ranger, cv_inds_Z, cv_desc, lrn_ranger, lrn_wb_T, measures),
+  new_features_ranger_improved = model_by_finded_variables(data_outliers_reduced_Z, new_features_ranger, cv_inds_Z, cv_desc, lrn_ranger, lrns_wb_T, measures),
   
   # 4b - create new features selected by ranger
   variables_rpart = read.csv("data/variables_rpart.csv", stringsAsFactors=FALSE)$x,
-  new_features_rpart = model_by_finded_variables(data_outliers_reduced_Z, variables_rpart, cv_inds, cv_desc, lrn_rpart_T, lrn_wb_T, measures),
-  new_features_rpart_improved = model_by_finded_variables(data_outliers_reduced_Z, new_features_rpart, cv_inds, cv_desc, lrn_rpart_T, lrns_wb_T, measures),
+  new_features_rpart = model_by_finded_variables(data_outliers_reduced_Z, variables_rpart, cv_inds_Z, cv_desc, lrn_rpart_T, lrn_wb_T, measures),
+  new_features_rpart_improved = model_by_finded_variables(data_outliers_reduced_Z, new_features_rpart, cv_inds_Z, cv_desc, lrn_rpart_T, lrns_wb_T, measures),
   
   # 4 - SMOTE algorithm
   bench_smote = calculate_smote(task_outliers_reduced_and_normalized_Z, 
