@@ -1,0 +1,22 @@
+---
+title: "Predicting code defects using interpretable static measures"
+author: "Bogucki Wojciech, Makowski Tomasz, Rafacz Dominik"
+date: "20.05.2020"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 7, fig.align = "center")
+```
+
+## Introduction
+
+## Data
+
+## Methodology
+
+## Results
+
+## Credits
