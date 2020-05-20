@@ -132,10 +132,22 @@ plan <- drake_plan(
                             task_halstead,
                             cv_desc, measures),
   
-  # 5 - SMOTE algorithm
-  bench_smote = calculate_smote(
+  # 5a - SMOTE algorithm with new features by ranger
+  bench_smote_ranger = calculate_smote(
     makeClassifTask("task",
       new_features_ranger_improved[[2]], target = "TARGET", blocking = cv_inds_Z), 
-                                    "task_smote", 1, lrns_wb_T, measures)
+                                    "task_smote_ranger", 1, lrns_wb_T, measures),
+  
+  # 5b - SMOTE algorithm with new features by rpart
+  bench_smote_rpart = calculate_smote(
+    makeClassifTask("task",
+                    new_features_rpart_improved[[2]], target = "TARGET", blocking = cv_inds_Z), 
+                    "task_smote_rpart", 1, lrns_wb_T, measures),
+  
+  # 5c - SMOTE algorithm without new features
+  bench_smote = calculate_smote(
+    makeClassifTask("task",
+                    data_outliers_reduced_and_normalized_Z, target = "TARGET", blocking = cv_inds_Z), 
+                    "task_smote", 1, lrns_wb_T, measures)
 )
 
