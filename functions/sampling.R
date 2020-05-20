@@ -28,9 +28,9 @@ calculate_smote <- function(task, task_id, dup_size, lrns, measures) {
     gen_data <- rbind(gen_data$data, gen_data$syn_data)
     for (col in c("source.1", "source.2", "source.3", "source.4", "source.5")) {
       source_unique <- unique(dat[[col]])
-      gen_data[[col]] <- ifelse(abs(gen_data[[col]] - source_unique[1, ]) <= abs(gen_data[[col]] - source_unique[2, ]),
-                                source_unique[1, ],
-                                source_unique[2, ])
+      gen_data[[col]] <- ifelse(abs(gen_data[[col]] - source_unique[1]) <= abs(gen_data[[col]] - source_unique[2]),
+                                source_unique[1],
+                                source_unique[2])
     }
     colnames(gen_data)[colnames(gen_data) == "class"] <- "TARGET"
     gen_data
