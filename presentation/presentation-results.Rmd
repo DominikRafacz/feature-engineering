@@ -1,0 +1,48 @@
+---
+title: "Predicting code defects using interpretable static measures"
+author: "Bogucki Wojciech, Makowski Tomasz, Rafacz Dominik"
+date: "20.05.2020"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 7, fig.align = "center")
+```
+
+## Introduction
+
+## Data
+
+## Methodology
+
+## Results
+
+<!-- ![](3-1-graphs/CompareModels.png) -->
+
+The main goal was to beat the ranger model AUC: 0.7916399
+
+<!-- Czy logarytm jest na wszystkich kolumnach, części, których?  -->
+
+**Explainable models AUC results**:
+
+| Number | Dataset  | logreg | kknn | rpart | selected |
+|------------|-------|---|---|---|--|
+| 0a | Base | 0.7347058 | 0.7275456 | 0.5000000 | no |
+| 0b | Rpart tuning | 0.7347058 | 0.7275456 | 0.7369539 | yes |
+| 1a | Normalization | 0.7347058 | 0.7272128 | 0.7369539 | no |
+| 1b | Outlier reduction | 0.7433360 | 0.7315207 | 0.7394017 | yes |
+| 1c | Logarithm | 0.7435403 | 0.7175103 | 0.7254062 | no? |
+| 2a | Outlier reduction and normalization | 0.7433360 | 0.7320932 | 0.7394017 | yes |
+| 2b | Logarithm and outlier reduction | 0.7435395 | 0.7168833 | 0.7246319 | no |
+| 3a | Gain-ratio discretization | 0.7433360 | 0.7317263 | 0.7394017 | no |
+| 3b | RSafe | 0.7437312 | 0.7176274 | 0.7338000 | no |
+| 4a | New features selected by ranger | 0.7472145 | 0.7288539 | 0.7334611 | yes |
+| 4b | New features selected by rpart | 0.7453705 | 0.7311457 | 0.7392657 | yes |
+| 4c | Halstead measures | 0.7448230 | 0.7311442 | 0.7376094 | no |
+| 5a | Smote with new features by ranger | 0.749 | 0.737 | 0.800 | yes |
+| 5b | Smote with new features by rpart | 0.747 | 0.736 | 0.793 | no |
+| 5c | Smote without new features | 0.745 | 0.736 | 0.804 | yes |
+
+## Credits
