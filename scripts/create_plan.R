@@ -46,7 +46,9 @@ plan <- drake_plan(
   par_rpart = tune_rpart(task_basic_N, measures, cv_desc),
   lrn_rpart_T = makeLearner("classif.rpart", id = "rpart_tuned", predict.type = "prob", par.vals = par_rpart),
   lrns_wb_T = c(lrns_wb, list(lrn_rpart_T)),
-  
+  bench_rpart_tuned = benchmark(lrns_wb_T, 
+                                list(task_basic_Z, task_basic_N), 
+                                cv_desc, measures),
   # 1a - normalization
   data_normalized_Z = normalize_df(data_basic_Z),
   data_normalized_N = normalize_df(data_basic_N),
