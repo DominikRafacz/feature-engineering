@@ -69,3 +69,16 @@ remove_halstead_measures <- function(dat) {
                            "total_operators",
                            "total_operands")]]
 }
+
+add_advanced_measures <- function(dat) {
+  data.frame(scale(select(mutate(dat,
+         volume = ifelse(is.nan((total_operators + total_operands) * log2(unique_operators + unique_operands)),
+                         0, (total_operators + total_operands) * log2(unique_operators + unique_operands)),
+         volume_minimal = (2 + unique_operands) * log2(2 + unique_operands),
+         length = ifelse(is.nan(volume / (total_operators + total_operands)) | volume == 0, 1,
+                         volume / (total_operators + total_operands)),
+         difficulty = 1 / length,
+         intelligence = length * volume,
+         effort = volume / length
+         ), -TARGET)), TARGET = dat$TARGET)
+}

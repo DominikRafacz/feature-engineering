@@ -123,6 +123,13 @@ plan <- drake_plan(
   new_features_rpart = model_by_finded_variables(data_outliers_reduced_Z, variables_rpart, cv_inds_Z, cv_desc, lrn_rpart_T, lrns_wb_T, measures),
   new_features_rpart_improved = model_by_finded_variables(data_outliers_reduced_Z, new_features_rpart[[4]], cv_inds_Z, cv_desc, lrn_rpart_T, lrns_wb_T, measures),
   
+  # 4c - add Halstead measures
+  data_halstead = add_advanced_measures(data_outliers_reduced_Z),
+  task_halstead = makeClassifTask("task_halstead", data_halstead, "TARGET", blocking = cv_inds_Z),
+  bech_halstead = benchmark(lrns_wb_T,
+                            task_halstead,
+                            cv_desc, measures),
+  
   # 5 - SMOTE algorithm
   bench_smote = calculate_smote(
     makeClassifTask("task",
