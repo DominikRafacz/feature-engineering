@@ -148,6 +148,12 @@ plan <- drake_plan(
   bench_smote = calculate_smote(
     makeClassifTask("task",
                     data_outliers_reduced_and_normalized_Z, target = "TARGET", blocking = cv_inds_Z), 
-                    "task_smote", 1, lrns_wb_T, measures)
+                    "task_smote", 1, lrns_wb_T, measures),
+  
+  # getting decision tree from best rpart on full dataset
+  data_full_smote = SMOTE(data_outliers_reduced_and_normalized_Z %>% select(-TARGET), data_outliers_reduced_and_normalized_Z$TARGET, dup_size = 1),
+  task_full_smote = makeClassifTask("task",data_full_smote$data, target = "class"),
+  model_full_smote = train(lrn_rpart_T,task_full_smote),
+  vis = visualize_tree(model_full_smote, "plots/rpart_tree.png")
 )
 

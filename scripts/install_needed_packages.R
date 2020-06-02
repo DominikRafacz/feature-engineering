@@ -17,7 +17,8 @@ for (package in c("drake",
                   "DiceKriging",
                   "rgenoud",
                   "devtools",
-                  "smotefamily"
+                  "smotefamily",
+                  "rpart.plot"
                   )) {
   if (!package %in% installed) install.packages(package)
 }
